@@ -1,0 +1,12 @@
+/* Tricky question. Things to consider that might caused mistakes: 1. How to retrive the million number with accuracy - use total_sales / 1000000.0 first to get the 1 decimal result of the million number, it is always generally a good habit to include decimals when doing numeric calculations
+ * 2. If submit with ORDER BY sales, the result is not accurate, because sales is a string data type instead of numeric data type, the highest sales $114 million will actually comes at last, which is not correct when the question is asking for total sales ordering with DESC order
+ * The question is assessing: 1. Numeric type and String type calculation and manipulation 2. How careful you are at ranking result with different data types
+*/
+
+
+SELECT 
+  manufacturer
+  , '$' || CAST(ROUND(SUM(total_sales / 1000000.0), 0) AS TEXT) || ' million' AS sales
+FROM pharmacy_sales
+GROUP BY manufacturer
+ORDER BY SUM(total_sales) DESC;
