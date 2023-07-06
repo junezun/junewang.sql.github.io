@@ -1,0 +1,14 @@
+/* The question is tesing:
+ * CASE caluse in aggregated functions
+ * ROUNDing numbers
+ * Easy-to-make mistakes: 1. not clear with CASE WHEN syntax: when case when is being used in aggregated functions, you don't need to alias it, otherwise it will cause syntax errors.
+ * 2. remember to END the CASE clause. (if not, ERROR msg: syntax error at or near ")" (LINE: 3)) 
+*/
+
+
+SELECT
+  app_id
+  , ROUND(100.0 * SUM(CASE WHEN event_type = 'click' THEN 1 ELSE 0 END) / SUM(CASE WHEN event_type = 'impression' THEN 1 ELSE 0 END),2) AS ctr
+FROM events
+WHERE EXTRACT(YEAR FROM timestamp) = 2022
+GROUP BY app_id;
