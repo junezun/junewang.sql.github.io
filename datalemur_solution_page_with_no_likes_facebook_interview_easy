@@ -1,0 +1,14 @@
+/* Main ask: Write a query to return the IDs of the Facebook pages that have zero likes. The output should be sorted in ascending order based on the page IDs. */
+/* Translate into SQL logic, means we want to find ways to exclude facebook pages that hasn't received any likes. Based on the table information, when pages that has likes, it will have a timestamp, otherwise the cell will be NULL. */
+/* So we just need to exlude page ids where the page_likes is NULL */
+
+/* Select all page ids from pages */
+SELECT page_id 
+FROM pages
+/* Exclude page ids with no likes within the same column so we don't need to use SELF JOIN */
+EXCEPT
+SELECT page_id 
+FROM page_likes
+/* when liked_date is null, means no one has liked the page yet */
+WHERE liked_date IS NOT NULL
+ORDER BY page_id ASC
