@@ -1,0 +1,26 @@
+/* Question statemetn: Assume you're given a table Twitter tweet data, write a query to obtain a histogram of tweets posted per user in 2022. Output the tweet count per user as the bucket and the number of Twitter users who fall into that bucket.
+ * In other words, group the users by the number of tweets they posted in 2022 and count the number of users in each group. 
+*/
+
+/* How I think about this problem: we want to count the number of tweets per user, where year is 2022. And group by user id. But the tricky part of this question is that, the output is asking a differnt way to organize your data rather than simply just count the # of tweets per user.
+ * Essentially, it is asking us to SELECT the first row to show category of tweet counts, and the number of people who falls into that category.
+ * The challenge here is that we can't use GROUP BY with aggregated function, so in my opinion, the most clear way to approach this is to break down the solution into 2 steps, it might not be the most simple way to solve this, but I choose to approach this with max readability by minimizing the use of subquery.
+*/
+
+/* USE CTE to retrive the first part of the output: number of tweets per user, and retrive user_id for later calculation*/
+WITH cte AS
+(
+SELECT
+  COUNT(tweet_id) AS tweet_bucket
+  , user_id
+FROM tweets
+WHERE EXTRACT(YEAR FROM tweet_date) = 2022
+GROUP BY user_id
+)
+
+/* Because we can't use aggregated functions with GROUP BY, so we use CTE to create a temp table, and then we can GROUP BY the defined tweet_bucket and COUNT number of user in each bucket without running into problem with GROUP BY and aggregation conflicts. */
+SELECT
+  tweet_bucket
+  , COUNT(user_id)
+FROM cte
+GROUP BY tweet_bucket
