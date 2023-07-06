@@ -1,0 +1,21 @@
+/*
+ * Common syntax error: aggregate function calls cannot be nested (LINE: 3) - if you try to retrive the MAX(SUM(issued_amount)), or MIN(SUM(issued_amount)) to calculate the difference, SQL wouldn't allow you to do so
+ * If you simply use MAX(issued_amount) - MIN(issued_amount) to calculate the difference, it will failed the condition of asking difference in issued amount between the month, because there're multiple record of issued_amount in each months. 
+ * The first step is to group issued_amount by card_name and issued_month to get sales amount per month for each card
+ * The second step is to calculate the difference between MAX sales month and MIN sales month to get the desire output
+*/
+
+WITH cte AS
+(SELECT
+  DISTINCT card_name
+  , SUM(issued_amount) AS amount_per_month
+FROM monthly_cards_issued
+GROUP BY card_name, issue_month
+)
+
+SELECT 
+  card_name
+  , MAX(amount_per_month) - MIN(amount_per_month) AS difference
+FROM cte
+GROUP BY card_name
+ORDER BY difference DESC
