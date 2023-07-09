@@ -1,0 +1,20 @@
+/* This question is testing the usage and your familiarity with window functions. By using window function ROW_NUMBER() OVER(PARTITION BY ... ORDER BY ...) can easily retrive the 3rd record of every rider ORDER BY transaction_date
+ * WHY not use RANK()? RANK() will return the rank of each row within a set of rows. The rank is determined by the order of the rows in the set. Rank 1 would be the first row. Tied rows receive the same rank, which can lead to gaps.
+ * You can use subquery or CTE to apporoach the solution, personally I prefer CTEs because it's more readable, and the CTEs can be reused, vs with subquery can be used within that query only.
+*/
+
+
+WITH cte AS(SELECT 
+  user_id
+  , spend
+  , transaction_date
+  , ROW_NUMBER() OVER(PARTITION BY user_id ORDER BY transaction_date ASC) AS rank
+FROM transactions
+GROUP BY user_id, spend, transaction_date)
+
+SELECT 
+  user_id
+  , spend
+  , transaction_date
+FROM cte
+WHERE rank = 3;
